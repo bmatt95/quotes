@@ -11,7 +11,7 @@ function fetchStockQuote(symbol, isInitMsg) {
   // build the GET request
   //req.open('GET', "http://dev.markitondemand.com/Api/Quote/json?" +
   //  "symbol=" + symbol, true);
-  req.open('GET', "http://10.184.34.38/", true);
+  req.open('GET', "http://10.184.45.119/?symbol=" + symbol, true);
   req.onload = function(e) {
     if (req.readyState == 4) {
       // 200 - HTTP OK

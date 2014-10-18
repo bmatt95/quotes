@@ -6,8 +6,8 @@ static struct EntryUi {
   Window *window;
   TextLayer *title_text;
 
-  TextLayer *chars_text[4];
-  char entry_chars[4][2];
+  TextLayer *chars_text[5];
+  char entry_chars[5][2];
   uint8_t index;
 
   char entry_name[30];
@@ -18,7 +18,7 @@ char *hs_name; // Pointer to put the name into.
 EntryCallback hs_callback;
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
-  if (ui.index < 4) {
+  if (ui.index < 5) {
     if (ui.entry_chars[ui.index][0] == 'Z')
       ui.entry_chars[ui.index][0] = 'A';
     else
@@ -28,7 +28,7 @@ static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
-  if (ui.index < 4) {
+  if (ui.index < 5) {
     if (ui.entry_chars[ui.index][0] == 'A')
       ui.entry_chars[ui.index][0] = 'Z';
     else
@@ -38,14 +38,14 @@ static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
 }
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
-  if (ui.index == 3)
+  if (ui.index == 4)
     ui.index = 0;
   else
     ++ui.index;
 
   inverter_layer_destroy(ui.invert);
   ui.invert = inverter_layer_create((GRect) {
-        .origin = { 35 + 20 * ui.index, 66 },
+        .origin = { 25 + 20 * ui.index, 66 },
         .size = { 15, 31 }
       });
   layer_add_child(window_get_root_layer(ui.window),
@@ -53,10 +53,19 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
 }
 
 static void select_long_click_handler(ClickRecognizerRef recognizer, void *context) {
-  if (ui.entry_chars[3][0] == '\0')
-    ui.entry_chars[3][0] = 'A';
-  else
+  if (ui.entry_chars[4][0] >= 'A' && ui.entry_chars[4][0] <= 'Z')
+    ui.entry_chars[4][0] = '\0';
+  else if (ui.entry_chars[4][0] == '\0' && ui.entry_chars[3][0] >= 'A' && ui.entry_chars[3][0] <= 'Z')
     ui.entry_chars[3][0] = '\0';
+  else if (ui.entry_chars[3][0] == '\0' && ui.entry_chars[2][0] >= 'A' && ui.entry_chars[2][0] <= 'Z')
+    ui.entry_chars[2][0] = '\0';
+  else if (ui.entry_chars[2][0] == '\0' && ui.entry_chars[1][0] >= 'A' && ui.entry_chars[1][0] <= 'Z')
+    ui.entry_chars[1][0] = '\0';
+  else if (ui.entry_chars[1][0] == '\0' && ui.entry_chars[0][0] >= 'A' && ui.entry_chars[0][0] <= 'Z') {
+    for (int i = 1; i < 5; i++) {
+      ui.entry_chars[i][0] = 'A';
+    }
+  }
 
   layer_mark_dirty(text_layer_get_layer(ui.chars_text[ui.index]));
 }
@@ -85,11 +94,11 @@ static void window_load(Window *window) {
 
   ui.index = 0;
 
-  for (int i = 0; i < 4; ++i) {
+  for (int i = 0; i < 5; ++i) {
     strncpy(ui.entry_chars[i], "A", 2);
 
     ui.chars_text[i] = text_layer_create(
-        (GRect) { .origin = { 35+20*i, 64 },  .size = { 15, 50 } });
+        (GRect) { .origin = { 25+20*i, 64 },  .size = { 15, 50 } });
     text_layer_set_font(ui.chars_text[i],
                         fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
     text_layer_set_text_alignment(ui.chars_text[i], GTextAlignmentCenter);
@@ -98,7 +107,7 @@ static void window_load(Window *window) {
   }
 
   ui.invert = inverter_layer_create((GRect) {
-        .origin = { 35, 66 },
+        .origin = { 25, 66 },
         .size = { 16, 31 }
       });
   layer_add_child(window_layer, inverter_layer_get_layer(ui.invert));
@@ -106,11 +115,11 @@ static void window_load(Window *window) {
 
 static void window_unload(Window *window) {
   text_layer_destroy(ui.title_text);
-  for (int i = 0; i < 4; ++i) {
+  for (int i = 0; i < 5; ++i) {
     hs_name[i] = ui.entry_chars[i][0];
     text_layer_destroy(ui.chars_text[i]);
   }
-  hs_name[4] = '\0';
+  hs_name[5] = '\0';
   inverter_layer_destroy(ui.invert);
   hs_callback(hs_name);
 }

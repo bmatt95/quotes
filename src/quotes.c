@@ -126,10 +126,10 @@ static void window_load(Window *window) {
   GRect bounds = layer_get_bounds(window_layer);
 
   symbol_layer = text_layer_create(
-      (GRect) { .origin = { 0, 20 }, .size = { bounds.size.w, 50 } });
+      (GRect) { .origin = { 0, 30 }, .size = { bounds.size.w, 50 } });
   text_layer_set_text(symbol_layer, "PBL");
   text_layer_set_text_alignment(symbol_layer, GTextAlignmentCenter);
-  text_layer_set_font(symbol_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
+  text_layer_set_font(symbol_layer, fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK));
   layer_add_child(window_layer, text_layer_get_layer(symbol_layer));
 
   price_layer = text_layer_create(
